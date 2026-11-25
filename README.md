@@ -2,8 +2,6 @@
 
 **Interactive Thoracic PACS Portal, Open-Access Lung Cancer Dataset Explorer, Benchmark Leaderboards & Local GPU Server for 33 Open-Weight Lung & Thoracic Radiology Foundation Models.**
 
-> Inspired by [prazg/Brain_Radiology_FM_Portal](https://github.com/prazg/Brain_Radiology_FM_Portal) — built as a zero-build static GitHub Pages application (`docs/`) paired with an optional privacy-preserving local/HPC FastAPI GPU server (`backend/`).
-
 ---
 
 ## Key Capabilities
@@ -91,5 +89,5 @@ See [SETUP.md](SETUP.md) for GitHub Pages deployment, full PyTorch/MONAI GPU dep
 ---
 
 ## Research Use Only
-
+Built by Prajwal Ghimire. CopyRight Prajwal Ghimire.
 This software and all catalogued research models and datasets are provided strictly for **research and educational use**. Nothing in this repository is cleared for clinical diagnosis or patient management.
