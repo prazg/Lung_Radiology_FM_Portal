@@ -1,0 +1,29 @@
+# Example configuration for the Lung Radiology FM Portal local GPU server
+# Copy to config.yaml and customize before launching with real patient scans.
+
+host: "127.0.0.1"
+port: 8000
+
+# Optional shared secret checked via X-Portal-Key header when exposing over LAN/SSH
+portal_key: ""
+
+# Enable mock inference across all 33 models without PyTorch or downloaded weights
+mock_mode: false
+
+# Allowed origins for browser CORS (GitHub Pages + local static dev servers)
+cors_origins:
+  - "https://prazg.github.io"
+  - "http://127.0.0.1:5500"
+  - "http://localhost:5500"
+  - "http://127.0.0.1:8080"
+  - "http://localhost:8080"
+
+# Restrict server-side path loading to explicit directories (prevents arbitrary traversal)
+allowed_scan_roots:
+  - "./sample_scans"
+
+# Directory for temporary uploaded scans & output artifacts
+work_dir: "./work_artifacts"
+
+# Optional Hugging Face cache override
+hf_cache_dir: ""

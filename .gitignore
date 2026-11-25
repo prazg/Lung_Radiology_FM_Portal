@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+
+# Local server secrets, scan data & downloaded weights (never commit PHI or weights)
+backend/config.yaml
+backend/work_artifacts/
+backend/sample_scans/
+weights/
+bundles/
+*.nii
+*.nii.gz
+*.dcm
+*.mhd
+*.raw
+*.pt
+*.pth
+*.safetensors
+
+# OS & editor artifacts
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

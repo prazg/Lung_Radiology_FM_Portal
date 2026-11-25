@@ -1,0 +1,40 @@
+name: Deploy Lung Radiology FM Portal to GitHub Pages
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate docs/models.json schema
+        run: python3 -c "import json; d=json.load(open('docs/models.json', encoding='utf-8')); assert len(d['models'])>=30 and len(d['datasets'])>=15 and len(d['benchmarks'])>=8; print('Validated', len(d['models']), 'models,', len(d['datasets']), 'datasets,', len(d['benchmarks']), 'benchmarks')"
+
+      - name: Setup GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload static portal artifact (docs/)
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: "docs"
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

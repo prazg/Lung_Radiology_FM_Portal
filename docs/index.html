@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lung Radiology FM Portal — Open-Weight Thoracic & Lung Cancer Foundation Models</title>
+  <meta name="description" content="Interactive Thoracic PACS portal, open-access lung cancer dataset explorer, benchmark leaderboards, verified BibTeX papers, and optional local GPU inference server for 33 open-weight 3D Chest CT, LDCT, PET/CT & CXR foundation models." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:wght@600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+  <!-- Cross-suite navigation strip -->
+  <div class="suite-bar">
+    <div class="suite-bar-inner">
+      <div class="suite-badge">
+        <span class="suite-dot" aria-hidden="true"></span>
+        <span>OPEN ONCOLOGY &amp; RADIOLOGY SUITE</span>
+      </div>
+      <nav class="suite-links" id="suite-links" aria-label="Open Radiology Suite"></nav>
+      <a class="suite-author" href="https://github.com/prazg" target="_blank" rel="noopener noreferrer">@prazg ↗</a>
+    </div>
+  </div>
+
+  <!-- Sticky main portal header -->
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a href="#models" class="brand" id="brand-home">
+        <span class="brand-mark" aria-hidden="true">
+          <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+            <rect x="1.5" y="1.5" width="29" height="29" rx="7" stroke="currentColor" stroke-width="1.6" opacity="0.45"/>
+            <path d="M16 6V17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M16 12C13 12 9 14.2 8 18.8C7.2 22.5 8.8 25.5 11.4 25.5C13.6 25.5 14.5 23.6 14.8 20.5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/>
+            <path d="M16 12C19 12 23 14.2 24 18.8C24.8 22.5 23.2 25.5 20.6 25.5C18.4 25.5 17.5 23.6 17.2 20.5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/>
+            <circle cx="11.2" cy="17.2" r="2.1" fill="#f59e0b"/>
+          </svg>
+        </span>
+        <span class="brand-text">Lung Radiology FM Portal</span>
+      </a>
+
+      <nav class="nav-tabs" role="tablist" aria-label="Portal sections">
+        <button class="nav-tab active" role="tab" data-tab="models" aria-selected="true">Models</button>
+        <button class="nav-tab" role="tab" data-tab="datasets" aria-selected="false">Datasets</button>
+        <button class="nav-tab" role="tab" data-tab="benchmarks" aria-selected="false">Benchmarks</button>
+        <button class="nav-tab" role="tab" data-tab="run" aria-selected="false">Run</button>
+        <button class="nav-tab" role="tab" data-tab="results" aria-selected="false">Results</button>
+        <button class="nav-tab" role="tab" data-tab="papers" aria-selected="false">Papers</button>
+        <button class="nav-tab" role="tab" data-tab="connect" aria-selected="false">Connect</button>
+      </nav>
+
+      <div class="topbar-actions">
+        <button class="status-pill demo" id="mode-pill" title="Switch between browser 3D Thorax CT Demo and local GPU server">
+          <span class="status-dot" aria-hidden="true"></span>
+          <span id="mode-pill-text">Demo mode (3D Thorax CT)</span>
+        </button>
+        <button class="icon-btn" id="theme-toggle" title="Toggle PACS Darkroom / Thoracic Lightbox theme" aria-label="Toggle theme">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="9"/>
+            <path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- ==================== TAB 1: MODELS ==================== -->
+    <section id="tab-models" class="tab-panel active" role="tabpanel">
+      <div class="hero">
+        <h1>Open-weight lung cancer CT, LDCT, PET/CT &amp; CXR foundation models on one PACS bench.</h1>
+        <p class="hero-lead">
+          Explore 33 open-weight thoracic radiology foundation models, 18 open-access lung cancer datasets, and 8 clinical benchmarks — or run 1–6 year lung cancer risk prediction, 3D Lung-RADS nodule &amp; NSCLC GTV segmentation, tri-planar HU-windowed Chest CT inspection, and grounded CXR reporting directly in-browser or on your own GPU server. This static GitHub Pages app never uploads patient scans.
+        </p>
+        <div class="hero-kpis" id="hero-kpis"></div>
+      </div>
+
+      <!-- Hardware Fit Advisor Bar -->
+      <div class="hw-bar" id="hw-bar">
+        <div class="hw-left">
+          <div class="hw-summary" id="hw-summary">Detecting local browser GPU &amp; CPU threads…</div>
+          <div class="hw-sub" id="hw-sub">Browser Demo mode active — connect your local/HPC GPU server under Connect for real NIfTI &amp; DICOM inference.</div>
+        </div>
+        <div class="hw-right">
+          <label for="vram-select">VRAM target:</label>
+          <select id="vram-select" class="select-compact">
+            <option value="auto">Auto-detect device</option>
+            <option value="0">CPU only (0 GB VRAM)</option>
+            <option value="4">4 GB GPU (Laptop)</option>
+            <option value="8">8 GB GPU (RTX 4060 / 3070)</option>
+            <option value="12">12 GB GPU (RTX 3060 / 4070)</option>
+            <option value="16">16 GB GPU (T4 / RTX 4080)</option>
+            <option value="24">24 GB GPU (RTX 3090 / 4090 / L4)</option>
+            <option value="48">48+ GB GPU (A6000 / A100 / H100)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="catalogue-layout">
+        <!-- Sticky left filter sidebar -->
+        <aside class="sidebar" aria-label="Model filters">
+          <div class="search-box">
+            <input type="search" id="model-search" placeholder="Search model, lab, CT/CXR, task" autocomplete="off" />
+            <kbd class="kbd-hint" title="Press / to focus search">/</kbd>
+          </div>
+
+          <div class="filter-group">
+            <div class="filter-title">MODEL FAMILY</div>
+            <div id="family-filters" class="family-list"></div>
+          </div>
+
+          <div class="filter-group">
+            <div class="filter-title">MODALITY &amp; SCOPE</div>
+            <div id="modality-filters" class="pill-wrap"></div>
+          </div>
+
+          <div class="filter-group">
+            <div class="filter-title">ACCESS &amp; HARDWARE</div>
+            <label class="check-row"><input type="checkbox" id="filter-ungated" /> Ungated open weights only</label>
+            <label class="check-row"><input type="checkbox" id="filter-permissive" /> Permissive license (MIT / Apache-2.0)</label>
+            <label class="check-row"><input type="checkbox" id="filter-fits" /> Fits selected VRAM target</label>
+          </div>
+        </aside>
+
+        <!-- Main catalogue column -->
+        <div class="catalogue-main">
+          <div class="scenario-strip" id="scenario-chips"></div>
+
+          <div class="toolbar-row">
+            <div class="result-count" id="model-count">Loading catalogue…</div>
+            <div class="toolbar-btns">
+              <button class="btn btn-sm" id="export-bib-models">↓ Export BibTeX (.bib)</button>
+              <button class="btn btn-sm" id="export-csv-models">↓ Export CSV</button>
+            </div>
+          </div>
+
+          <div id="models-container" class="models-groups"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 2: OPEN DATASETS ==================== -->
+    <section id="tab-datasets" class="tab-panel" role="tabpanel">
+      <div class="section-head">
+        <div>
+          <h2>Open-Access Lung Cancer &amp; Thoracic Radiology Datasets</h2>
+          <p class="section-lead">18 curated public cohorts spanning LDCT lung cancer screening (NLST, LUNA25, DLCSD24), pulmonary nodules (LIDC-IDRI, LUNA16, LNDb), NSCLC radiomics &amp; radiogenomics, 3D volumetric CT + reports (CT-RATE, RAD-ChestCT), FDG-PET/CT (AutoPET, Lung-PET-CT-Dx), airway/OAR CT, and large-scale chest radiography (MIMIC-CXR, CheXpert, PadChest, VinDr-CXR).</p>
+        </div>
+        <div class="toolbar-btns">
+          <button class="btn btn-sm" id="export-datasets-bib">↓ Dataset BibTeX (.bib)</button>
+          <button class="btn btn-sm" id="export-datasets-csv">↓ Dataset CSV</button>
+        </div>
+      </div>
+
+      <div class="dataset-filter-bar">
+        <input type="search" id="dataset-search" class="input-grow" placeholder="Search dataset, TCIA, Zenodo, PhysioNet, PET/CT, Lung-RADS, GTV…" />
+        <select id="dataset-category" class="select-compact">
+          <option value="all">All categories</option>
+          <option value="screening">LDCT Screening &amp; Risk</option>
+          <option value="nodule">Pulmonary Nodule CT</option>
+          <option value="vlm_ct">3D Chest CT + Reports</option>
+          <option value="radiomics">NSCLC Radiomics &amp; PET/CT</option>
+          <option value="seg_pet">3D Tumor, Airway &amp; PET Seg</option>
+          <option value="cxr">2D Chest X-Ray (CXR)</option>
+        </select>
+        <select id="dataset-access" class="select-compact">
+          <option value="all">All access tiers</option>
+          <option value="open">Direct Open Access</option>
+          <option value="registration">Free Registration / DUA</option>
+          <option value="credentialed">Credentialed (PhysioNet)</option>
+        </select>
+      </div>
+
+      <div class="result-count" id="dataset-count"></div>
+      <div id="datasets-grid" class="datasets-grid"></div>
+    </section>
+
+    <!-- ==================== TAB 3: BENCHMARKS ==================== -->
+    <section id="tab-benchmarks" class="tab-panel" role="tabpanel">
+      <div class="section-head">
+        <div>
+          <h2>Thoracic &amp; Lung Cancer Benchmarks &amp; Leaderboards</h2>
+          <p class="section-lead">Published evaluation metrics across the 8 flagship open benchmarks spanning LDCT 1–6 year cancer risk (NLST), indeterminate nodule malignancy (LUNA25), CADe detection (LUNA16), 3D CT zero-shot triage (CT-RATE), NSCLC 3D segmentation (MSD Task06), oncologic FDG-PET/CT (AutoPET), grounded CXR reporting (ReXrank / CheXbench), and multi-cohort CXR transfer.</p>
+        </div>
+        <div class="toolbar-btns">
+          <select id="benchmark-modality" class="select-compact">
+            <option value="all">All modalities</option>
+            <option value="LDCT">LDCT Screening</option>
+            <option value="3D Chest CT">3D Chest CT</option>
+            <option value="FDG-PET/CT">FDG-PET/CT</option>
+            <option value="CXR">Chest X-Ray (CXR)</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="benchmarks-grid" class="benchmarks-grid"></div>
+
+      <div class="ecosystem-section">
+        <h3>Open Thoracic Radiology Tooling &amp; Standards</h3>
+        <div id="ecosystem-grid" class="ecosystem-grid"></div>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 4: RUN ==================== -->
+    <section id="tab-run" class="tab-panel" role="tabpanel">
+      <div class="section-head">
+        <div>
+          <h2>Run Thoracic Foundation Model</h2>
+          <p class="section-lead">Configure a 4-step clinical evaluation workflow. In browser Demo Mode, inference executes instantaneously on our built-in 128³ analytical Thorax CT phantom (true Hounsfield Units, RUL 18 mm spiculated adenocarcinoma + LLL calcified granuloma) or synthetic PA Chest X-ray. Connect your local GPU server under <strong>Connect</strong> to run real `.nii.gz`, DICOM, or CXR exams privately.</p>
+        </div>
+      </div>
+
+      <div class="run-layout">
+        <div class="run-form">
+          <div class="step-card">
+            <div class="step-head"><span class="step-num">1</span><h3>Choose foundation model</h3></div>
+            <label class="field-label" for="run-model-select">Open-weight model (grouped by family)</label>
+            <select id="run-model-select" class="select-full"></select>
+          </div>
+
+          <div class="step-card">
+            <div class="step-head"><span class="step-num">2</span><h3>Select clinical task</h3></div>
+            <div id="run-task-buttons" class="task-btn-group"></div>
+            <p class="field-hint" id="run-task-desc"></p>
+          </div>
+
+          <div class="step-card">
+            <div class="step-head"><span class="step-num">3</span><h3>Provide thoracic imaging input</h3></div>
+            <div class="dropzone" id="scan-dropzone">
+              <input type="file" id="scan-file-input" accept=".nii,.nii.gz,.dcm,.mha,.mhd,.png,.jpg,.jpeg" hidden />
+              <div class="dropzone-icon" aria-hidden="true">🫁</div>
+              <div class="dropzone-title" id="dropzone-title">Drop NIfTI (.nii / .nii.gz), DICOM, or CXR here — or click to select</div>
+              <div class="dropzone-sub" id="dropzone-sub">No file? Browser Demo Mode uses the built-in 128³ HU Thorax CT phantom (RUL spiculated 18mm nodule, Lung-RADS 4B) or synthetic PA Chest X-ray.</div>
+              <div class="dropzone-actions">
+                <button type="button" class="btn btn-sm" id="btn-choose-file">Browse local file</button>
+                <button type="button" class="btn btn-sm btn-ghost" id="btn-use-phantom">Use 3D Thorax CT Phantom</button>
+                <button type="button" class="btn btn-sm btn-ghost" id="btn-use-cxr-phantom">Use PA Chest X-Ray Phantom</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="step-card">
+            <div class="step-head"><span class="step-num">4</span><h3>Clinical indication &amp; inference settings</h3></div>
+            <div class="form-grid">
+              <div>
+                <label class="field-label" for="run-indication">Clinical indication / prompt</label>
+                <input type="text" id="run-indication" class="input-full" value="64M former smoker (38 pack-years), baseline LDCT lung cancer screening; evaluate RUL spiculated nodule and Lung-RADS category." />
+              </div>
+              <div>
+                <label class="field-label" for="run-guideline">Reporting / staging standard</label>
+                <select id="run-guideline" class="select-full">
+                  <option value="lungrads">ACR Lung-RADS v2022 (Screening LDCT)</option>
+                  <option value="fleischner">Fleischner Society 2017 (Incidental Nodule)</option>
+                  <option value="recist">RECIST 1.1 &amp; TNM-8 (NSCLC Oncology)</option>
+                </select>
+              </div>
+              <div>
+                <label class="field-label" for="run-window">Default PACS HU window</label>
+                <select id="run-window" class="select-full">
+                  <option value="lung">Lung Window (W:1500 / L:-600 HU)</option>
+                  <option value="mediastinal">Mediastinal / Soft Tissue (W:400 / L:40 HU)</option>
+                  <option value="nodule">High-Res Nodule (W:1200 / L:-500 HU)</option>
+                  <option value="bone">Bone / Calcification (W:1800 / L:400 HU)</option>
+                </select>
+              </div>
+              <div>
+                <label class="field-label" for="run-roi-prompt">Text / ROI prompt (for SegVol / SAT / VISTA3D / GenerateCT)</label>
+                <input type="text" id="run-roi-prompt" class="input-full" value="right upper lobe lung tumor, pulmonary nodules, five lung lobes, trachea" />
+              </div>
+            </div>
+
+            <div class="run-submit-row">
+              <button type="button" class="btn btn-primary btn-lg" id="btn-run-model">Run foundation model →</button>
+              <span class="run-privacy-note">Local-only: zero data leaves your browser in Demo Mode.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sticky right summary card -->
+        <aside class="run-summary-card" id="run-summary-card"></aside>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 5: RESULTS / PACS WORKBENCH ==================== -->
+    <section id="tab-results" class="tab-panel" role="tabpanel">
+      <div class="results-layout">
+        <aside class="jobs-sidebar">
+          <div class="jobs-header">
+            <h3>Studies &amp; Jobs</h3>
+            <button class="btn btn-xs" id="btn-new-run">+ New run</button>
+          </div>
+          <div id="jobs-list" class="jobs-list"></div>
+        </aside>
+
+        <div class="results-main" id="results-main">
+          <!-- Dynamically rendered by viewers.js -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 6: PAPERS & BIBTEX ==================== -->
+    <section id="tab-papers" class="tab-panel" role="tabpanel">
+      <div class="section-head">
+        <div>
+          <h2>Verified Papers, Preprints &amp; BibTeX Library</h2>
+          <p class="section-lead">Complete bibliography covering all 33 open-weight Lung Radiology Foundation Models and 18 Open-Access Datasets with verified DOIs, arXiv links, GitHub/Hugging Face repositories, and 1-click BibTeX export.</p>
+        </div>
+        <div class="toolbar-btns">
+          <button class="btn btn-sm" id="export-all-bib">↓ Export All BibTeX (.bib)</button>
+          <button class="btn btn-sm" id="export-all-csv">↓ Export All CSV</button>
+        </div>
+      </div>
+
+      <div class="dataset-filter-bar">
+        <input type="search" id="paper-search" class="input-grow" placeholder="Filter papers by title, author, model, dataset, venue (Nature, Radiology, JCO, CVPR, ICLR)…" />
+        <select id="paper-kind" class="select-compact">
+          <option value="all">Models + Datasets (51)</option>
+          <option value="model">Foundation Models (33)</option>
+          <option value="dataset">Open Datasets (18)</option>
+        </select>
+        <select id="paper-year" class="select-compact">
+          <option value="all">All years</option>
+          <option value="2026">2026</option>
+          <option value="2025">2025</option>
+          <option value="2024">2024</option>
+          <option value="2023">2023</option>
+          <option value="older">2022 &amp; earlier</option>
+        </select>
+      </div>
+
+      <div class="table-wrap">
+        <table class="papers-table">
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th>Type / Family</th>
+              <th>Year</th>
+              <th>Venue</th>
+              <th>Links</th>
+              <th>BibTeX</th>
+            </tr>
+          </thead>
+          <tbody id="papers-tbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 7: CONNECT GPU SERVER ==================== -->
+    <section id="tab-connect" class="tab-panel" role="tabpanel">
+      <div class="section-head">
+        <div>
+          <h2>Connect Local or HPC GPU Server</h2>
+          <p class="section-lead">Keep clinical NIfTI and DICOM lung CT exams strictly inside your hospital or research workstation. Run the companion FastAPI server (`backend/server.py`) locally or forward an HPC GPU over SSH.</p>
+        </div>
+      </div>
+
+      <div class="connect-mode-grid">
+        <label class="mode-card" id="mode-card-demo">
+          <input type="radio" name="exec-mode" value="demo" checked />
+          <div>
+            <strong>Interactive Browser Demo Mode</strong>
+            <p>Zero setup. Runs deterministic 3D Thorax CT (true HU) and PA CXR phantom demos across all 33 models directly in your browser.</p>
+          </div>
+        </label>
+        <label class="mode-card" id="mode-card-server">
+          <input type="radio" name="exec-mode" value="server" />
+          <div>
+            <strong>My Local / Remote GPU Server</strong>
+            <p>Streams inference requests to your own FastAPI server (`127.0.0.1:8000` or SSH tunnel) with CORS &amp; Private-Network-Access security.</p>
+          </div>
+        </label>
+      </div>
+
+      <div class="connect-grid">
+        <div class="card-panel">
+          <h3>Server Endpoint &amp; Credentials</h3>
+          <div class="form-stack">
+            <div>
+              <label class="field-label" for="server-url">FastAPI server URL</label>
+              <input type="url" id="server-url" class="input-full mono" value="http://127.0.0.1:8000" />
+            </div>
+            <div>
+              <label class="field-label" for="server-key">Portal API Key (optional, matches `config.yaml`)</label>
+              <input type="password" id="server-key" class="input-full mono" placeholder="Leave blank for open local dev" />
+            </div>
+            <div>
+              <label class="field-label" for="hf-token">Session-only Hugging Face Token (for gated weights: MedGemma, MAIRA-2, CT-CHAT, CXR Foundation)</label>
+              <input type="password" id="hf-token" class="input-full mono" placeholder="hf_... (never stored in localStorage)" />
+            </div>
+            <div class="btn-row">
+              <button type="button" class="btn btn-primary" id="btn-test-server">Test connection &amp; probe GPU</button>
+              <button type="button" class="btn" id="btn-save-server">Save &amp; activate server mode</button>
+            </div>
+          </div>
+          <div id="server-status-box" class="status-box">
+            <strong>Status:</strong> Browser Demo mode active. Click <em>Test connection</em> after starting <code>backend/server.py</code>.
+          </div>
+        </div>
+
+        <div class="card-panel">
+          <h3>Quickstart: Start Local GPU or Mock Server</h3>
+          <p class="muted-sm">Clone this repository and launch the FastAPI server with mock verification (zero GPU needed) or full PyTorch + MONAI + Hugging Face GPU inference:</p>
+          <pre class="code-block" id="server-quickstart-code">git clone https://github.com/prazg/Lung_Radiology_FM_Portal.git
+cd Lung_Radiology_FM_Portal/backend
+
+# 1. Lightweight mock + NIfTI slice preview server (no GPU required)
+pip install -r requirements-server.txt
+PORTAL_MOCK=1 uvicorn server:app --host 127.0.0.1 --port 8000
+
+# 2. Full GPU inference (PyTorch + MONAI + Hugging Face + TotalSegmentator)
+pip install -r requirements.txt
+uvicorn server:app --host 127.0.0.1 --port 8000
+
+# 3. Remote HPC GPU workstation via SSH port forwarding
+ssh -N -L 8000:127.0.0.1:8000 user@gpu-cluster.institution.edu</pre>
+          <button type="button" class="btn btn-sm" id="btn-copy-server-cmd">Copy startup commands</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Sticky Bottom Compare Dock (appears only when >=1 models pinned) -->
+  <div class="compare-dock hidden" id="compare-dock" role="region" aria-label="Pinned models comparison dock">
+    <div class="compare-dock-inner">
+      <div class="compare-dock-left">
+        <span class="compare-dock-label" id="compare-dock-label">Compare Models (0/4)</span>
+        <div class="compare-chips" id="compare-chips"></div>
+      </div>
+      <div class="compare-dock-actions">
+        <button class="btn btn-primary btn-sm" id="btn-open-compare">Compare side-by-side</button>
+        <button class="btn btn-sm" id="btn-compare-bib">↓ .bib</button>
+        <button class="btn btn-sm" id="btn-compare-csv">↓ .csv</button>
+        <button class="btn btn-sm btn-ghost" id="btn-compare-clear">Clear</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Model Details & CLI Quickstart -->
+  <div class="modal-backdrop hidden" id="detail-modal" role="dialog" aria-modal="true" aria-labelledby="detail-modal-title">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-header">
+        <div>
+          <span class="modal-kicker" id="detail-modal-kicker"></span>
+          <h3 id="detail-modal-title"></h3>
+        </div>
+        <button class="icon-btn modal-close" data-close-modal="detail-modal" aria-label="Close modal">✕</button>
+      </div>
+      <div class="modal-body" id="detail-modal-body"></div>
+    </div>
+  </div>
+
+  <!-- Modal: Side-by-Side Comparison -->
+  <div class="modal-backdrop hidden" id="compare-modal" role="dialog" aria-modal="true" aria-labelledby="compare-modal-title">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-header">
+        <div>
+          <span class="modal-kicker">SIDE-BY-SIDE SPECIFICATION MATRIX</span>
+          <h3 id="compare-modal-title">Compare Thoracic Foundation Models</h3>
+        </div>
+        <div class="modal-header-right">
+          <select id="compare-add-select" class="select-compact" aria-label="Add model to comparison"></select>
+          <button class="icon-btn modal-close" data-close-modal="compare-modal" aria-label="Close modal">✕</button>
+        </div>
+      </div>
+      <div class="modal-body" id="compare-modal-body"></div>
+    </div>
+  </div>
+
+  <!-- Toast notification -->
+  <div class="toast hidden" id="toast" role="status" aria-live="polite"></div>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div>
+        <strong>Research Use Only</strong> — Not cleared for clinical diagnosis or patient management. Inspired by
+        <a href="https://github.com/prazg/Brain_Radiology_FM_Portal" target="_blank" rel="noopener noreferrer">Brain Radiology FM Portal</a>.
+      </div>
+      <div class="footer-links">
+        <span>Built for GitHub Pages · NiBabel · Project MONAI · NCI IDC / TCIA · Hugging Face Hub</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/hardware.js"></script>
+  <script src="assets/demo.js"></script>
+  <script src="assets/viewers.js"></script>
+  <script src="assets/app.js"></script>
+</body>
+</html>
